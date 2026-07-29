@@ -44,7 +44,8 @@ jobs:
 
       - name: Pack firmware (Snapmaker format, 2048-byte header)
         run: |
-          VC=$(grep -oP 'SM2-\K[0-9.]+' Marlin/src/inc/Version.h | head -1)
+          # Extract the full version suffix after "SM2-" (e.g., "5.2.1" or "5.2.1-5AXIS-V5")
+          VC=$(grep -oP 'SM2-\K[0-9.][^"\s]*' Marlin/src/inc/Version.h | head -1)
           python snapmaker/scripts/pack.py -c stage/firmware.bin -d . -vc "V${VC}-5axis"
 
       - name: Upload firmware binary (raw)
