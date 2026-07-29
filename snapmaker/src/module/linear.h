@@ -119,7 +119,7 @@ class Linear: public ModuleBase  {
     uint32_t      endstop_;
 
     MachineSize   machine_size_;
-    float axis_steps_per_unit[5] = DEFAULT_TMC_AXIS_STEPS_PER_UNIT;
+    float axis_steps_per_unit[NUM_AXIS] = DEFAULT_TMC_AXIS_STEPS_PER_UNIT;
 };
 
 extern Linear linear;
