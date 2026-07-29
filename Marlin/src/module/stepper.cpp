@@ -2217,7 +2217,7 @@ void Stepper::StepperPinRemap() {
   SET_AXIS_VALUE(x, X);
   SET_AXIS_VALUE(y, Y);
   SET_AXIS_VALUE(z, Z);
-  SET_AXIS_VALUE(a, A);
+  // SET_AXIS_VALUE(a, A) removed for A350 + 5-axis: A_AXIS not declared, A-axis handled by SET_AXIS_VALUE(j, J) below
   SET_AXIS_VALUE(b, B);
   SET_AXIS_VALUE(j, J);
   SET_AXIS_VALUE(e0, E);

@@ -1785,7 +1785,8 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   const int32_t dx = target[X_AXIS] - position[X_AXIS],
                 dy = target[Y_AXIS] - position[Y_AXIS],
                 dz = target[Z_AXIS] - position[Z_AXIS],
-                db = target[B_AXIS] - position[B_AXIS];
+                db = target[B_AXIS] - position[B_AXIS],
+                dj = target[J_AXIS] - position[J_AXIS];  // A350 + 5-axis
 
   int32_t de = target[E_AXIS] - position[E_AXIS];
 
@@ -1929,6 +1930,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
     delta_mm[Y_AXIS] = dy * steps_to_mm[Y_AXIS];
     delta_mm[Z_AXIS] = dz * steps_to_mm[Z_AXIS];
     delta_mm[B_AXIS] = db * steps_to_mm[B_AXIS];
+    delta_mm[J_AXIS] = dj * steps_to_mm[J_AXIS];  // A350 + 5-axis
   #endif
   delta_mm[E_AXIS] = esteps_float * steps_to_mm[E_AXIS_N(extruder)];
 
