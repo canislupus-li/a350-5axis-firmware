@@ -691,7 +691,7 @@ class Planner {
      *  extruder    - target extruder
      *  millimeters - the length of the movement, if known
      */
-    static bool buffer_segment(const float &x, const float &y, const float &z, const float &b, const float &e
+    static bool buffer_segment(const float &x, const float &y, const float &z, const float &b, const float &j, const float &e
       #if IS_KINEMATIC && ENABLED(JUNCTION_DEVIATION)
         , const float (&delta_mm_cart)[XYZE]
       #endif
@@ -704,7 +704,7 @@ class Planner {
       #endif
       , const float &fr_mm_s, const uint8_t extruder, const float &millimeters=0.0
     ) {
-      return buffer_segment(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[B_AXIS], target[E_AXIS]
+      return buffer_segment(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[B_AXIS], target[J_AXIS], target[E_AXIS]
         #if IS_KINEMATIC && ENABLED(JUNCTION_DEVIATION)
           , delta_mm_cart
         #endif
@@ -725,7 +725,7 @@ class Planner {
      *  millimeters  - the length of the movement, if known
      *  inv_duration - the reciprocal if the duration of the movement, if known (kinematic only if feeedrate scaling is enabled)
      */
-    static bool buffer_line(const float &rx, const float &ry, const float &rz, const float &rb, const float &e, const float &fr_mm_s, const uint8_t extruder, const float millimeters=0.0
+    static bool buffer_line(const float &rx, const float &ry, const float &rz, const float &rb, const float &j, const float &e, const float &fr_mm_s, const uint8_t extruder, const float millimeters=0.0
       #if ENABLED(SCARA_FEEDRATE_SCALING)
         , const float &inv_duration=0.0
       #endif
@@ -736,7 +736,7 @@ class Planner {
         , const float &inv_duration=0.0
       #endif
     ) {
-      return buffer_line(cart[X_AXIS], cart[Y_AXIS], cart[Z_AXIS], cart[B_AXIS], cart[E_AXIS], fr_mm_s, extruder, millimeters
+      return buffer_line(cart[X_AXIS], cart[Y_AXIS], cart[Z_AXIS], cart[B_AXIS], cart[J_AXIS], cart[E_AXIS], fr_mm_s, extruder, millimeters
         #if ENABLED(SCARA_FEEDRATE_SCALING)
           , inv_duration
         #endif
@@ -756,8 +756,8 @@ class Planner {
      *
      * Clears previous speed values.
      */
-    static void set_position_mm(const float &rx, const float &ry, const float &rz, const float &rb, const float &e);
-    FORCE_INLINE static void set_position_mm(const float (&cart)[X_TO_E]) { set_position_mm(cart[X_AXIS], cart[Y_AXIS], cart[Z_AXIS], cart[B_AXIS], cart[E_AXIS]); }
+    static void set_position_mm(const float &rx, const float &ry, const float &rz, const float &rb, const float &j, const float &e);
+    FORCE_INLINE static void set_position_mm(const float (&cart)[X_TO_E]) { set_position_mm(cart[X_AXIS], cart[Y_AXIS], cart[Z_AXIS], cart[B_AXIS], cart[J_AXIS], cart[E_AXIS]); }
     static void set_e_position_mm(const float &e);
 
     /**
@@ -766,9 +766,9 @@ class Planner {
      * The supplied position is in machine space, and no additional
      * conversions are applied.
      */
-    static void set_machine_position_mm(const float &x, const float &y, const float &z, const float &b, const float &e);
+    static void set_machine_position_mm(const float &x, const float &y, const float &z, const float &b, const float &j, const float &e);
     FORCE_INLINE static void set_machine_position_mm(const float (&target)[X_TO_E]) {
-      set_machine_position_mm(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[B_AXIS], target[E_AXIS]);
+      set_machine_position_mm(target[X_AXIS], target[Y_AXIS], target[Z_AXIS], target[B_AXIS], target[J_AXIS], target[E_AXIS]);
     }
 
     /**

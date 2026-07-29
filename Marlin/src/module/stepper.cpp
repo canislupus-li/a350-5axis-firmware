@@ -1853,6 +1853,7 @@ uint32_t Stepper::stepper_block_phase_isr() {
         _set_position(
           current_block->position[X_AXIS], current_block->position[Y_AXIS],
           current_block->position[Z_AXIS], current_block->position[B_AXIS],
+          current_block->position[J_AXIS],   // A350 + 5-axis
           current_block->position[E_AXIS]
         );
         planner.discard_current_block();
@@ -2428,7 +2429,7 @@ void Stepper::reinit_for_ftmotion() {
  * This allows get_axis_position_mm to correctly
  * derive the current XYZ position later on.
  */
-void Stepper::_set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &e) {
+void Stepper::_set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &j, const int32_t &e) {
   #if CORE_IS_XY
     // corexy positioning
     // these equations follow the form of the dA and dB equations on http://www.corexy.com/theory.html
@@ -2451,6 +2452,7 @@ void Stepper::_set_position(const int32_t &x, const int32_t &y, const int32_t &z
     count_position[Y_AXIS] = y;
     count_position[Z_AXIS] = z;
     count_position[B_AXIS] = b;
+    count_position[J_AXIS] = j;   // A350 + 5-axis
   #endif
   count_position[E_AXIS] = e;
 }

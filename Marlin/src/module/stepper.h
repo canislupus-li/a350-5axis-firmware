@@ -474,11 +474,11 @@ class Stepper {
     #endif
 
     // Set the current position in steps
-    static inline void set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &e) {
+    static inline void set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &j, const int32_t &e) {
       planner.synchronize();
       const bool was_enabled = STEPPER_ISR_ENABLED();
       if (was_enabled) DISABLE_STEPPER_DRIVER_INTERRUPT();
-      _set_position(x, y, z, b, e);
+      _set_position(x, y, z, b, j, e);
       if (was_enabled) ENABLE_STEPPER_DRIVER_INTERRUPT();
     }
 
@@ -516,7 +516,7 @@ class Stepper {
 
     // Set the current position in steps
     static void _set_position(const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &e);
-    static void _set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &e);
+    static void _set_position(const int32_t &x, const int32_t &y, const int32_t &z, const int32_t &b, const int32_t &j, const int32_t &e);
 
     FORCE_INLINE static uint32_t calc_timer_interval(uint32_t step_rate, uint8_t scale, uint8_t* loops) {
       uint32_t timer;

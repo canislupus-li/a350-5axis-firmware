@@ -2710,6 +2710,7 @@ void Planner::buffer_sync_block(bool sync_e) {
   block->position[Y_AXIS] = position[Y_AXIS];
   block->position[Z_AXIS] = position[Z_AXIS];
   block->position[B_AXIS] = position[B_AXIS];
+  block->position[J_AXIS] = position[J_AXIS];   // A350 + 5-axis
   block->position[E_AXIS] = position[E_AXIS];
 
   // If this is the first added movement, reload the delay, otherwise, cancel it.
@@ -2749,7 +2750,7 @@ void Planner::buffer_sync_block(bool sync_e) {
  *  extruder    - target extruder
  *  millimeters - the length of the movement, if known
  */
-bool Planner::buffer_segment(const float &x, const float &y, const float &z, const float &b, const float &e
+bool Planner::buffer_segment(const float &x, const float &y, const float &z, const float &b, const float &j, const float &e
   #if IS_KINEMATIC && ENABLED(JUNCTION_DEVIATION)
     , const float (&delta_mm_cart)[XYZE]
   #endif
@@ -2774,11 +2775,12 @@ bool Planner::buffer_segment(const float &x, const float &y, const float &z, con
     LROUND(y * settings.axis_steps_per_mm[Y_AXIS]),
     LROUND(z * settings.axis_steps_per_mm[Z_AXIS]),
     LROUND(b * settings.axis_steps_per_mm[B_AXIS]),
+    LROUND(j * settings.axis_steps_per_mm[J_AXIS]),   // A350 + 5-axis
     LROUND(e * settings.axis_steps_per_mm[E_AXIS_N(extruder)])
   };
 
   #if HAS_POSITION_FLOAT
-    const float target_float[X_TO_E] = { x, y, z, b, e };
+    const float target_float[X_TO_E] = { x, y, z, b, j, e };
   #endif
 
   // DRYRUN prevents E moves from taking place
@@ -2849,12 +2851,12 @@ bool Planner::buffer_segment(const float &x, const float &y, const float &z, con
  *  millimeters  - the length of the movement, if known
  *  inv_duration - the reciprocal if the duration of the movement, if known (kinematic only if feeedrate scaling is enabled)
  */
-bool Planner::buffer_line(const float &rx, const float &ry, const float &rz, const float &rb, const float &e, const float &fr_mm_s, const uint8_t extruder, const float millimeters
+bool Planner::buffer_line(const float &rx, const float &ry, const float &rz, const float &rb, const float &j, const float &e, const float &fr_mm_s, const uint8_t extruder, const float millimeters
   #if ENABLED(SCARA_FEEDRATE_SCALING)
     , const float &inv_duration
   #endif
 ) {
-  float raw[X_TO_E] = { rx, ry, rz, rb, e };
+  float raw[X_TO_E] = { rx, ry, rz, rb, j, e };
   #if HAS_POSITION_MODIFIERS
     apply_modifiers(raw);
   #endif
@@ -2883,7 +2885,7 @@ bool Planner::buffer_line(const float &rx, const float &ry, const float &rz, con
     #else
       const float feedrate = fr_mm_s;
     #endif
-    if (buffer_segment(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], raw[E_AXIS]
+    if (buffer_segment(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], raw[B_AXIS], raw[J_AXIS], raw[E_AXIS]
       #if ENABLED(JUNCTION_DEVIATION)
         , delta_mm_cart
       #endif
@@ -2892,6 +2894,7 @@ bool Planner::buffer_line(const float &rx, const float &ry, const float &rz, con
       position_cart[X_AXIS] = rx;
       position_cart[Y_AXIS] = ry;
       position_cart[Z_AXIS] = rz;
+      position_cart[J_AXIS] = j;   // A350 + 5-axis
       position_cart[E_AXIS] = e;
       return true;
     }
@@ -2909,7 +2912,7 @@ bool Planner::buffer_line(const float &rx, const float &ry, const float &rz, con
  * The provided ABC position is in machine units.
  */
 
-void Planner::set_machine_position_mm(const float &x, const float &y, const float &z, const float &b, const float &e) {
+void Planner::set_machine_position_mm(const float &x, const float &y, const float &z, const float &b, const float &j, const float &e) {
   #if ENABLED(DISTINCT_E_FACTORS)
     last_extruder = active_extruder;
   #endif
@@ -2917,12 +2920,14 @@ void Planner::set_machine_position_mm(const float &x, const float &y, const floa
   position[Y_AXIS] = LROUND(y * settings.axis_steps_per_mm[Y_AXIS]);
   position[Z_AXIS] = LROUND(z * settings.axis_steps_per_mm[Z_AXIS]);
   position[B_AXIS] = LROUND(b * settings.axis_steps_per_mm[B_AXIS]);
+  position[J_AXIS] = LROUND(j * settings.axis_steps_per_mm[J_AXIS]);   // A350 + 5-axis
   position[E_AXIS] = LROUND(e * settings.axis_steps_per_mm[E_AXIS_N(active_extruder)]);
   #if HAS_POSITION_FLOAT
     position_float[X_AXIS] = x;
     position_float[Y_AXIS] = y;
     position_float[Z_AXIS] = z;
     position_float[B_AXIS] = b;
+    position_float[J_AXIS] = j;   // A350 + 5-axis
     position_float[E_AXIS] = e;
   #endif
   if (has_blocks_queued()) {
@@ -2931,11 +2936,11 @@ void Planner::set_machine_position_mm(const float &x, const float &y, const floa
     buffer_sync_block();
   }
   else
-    stepper.set_position(position[X_AXIS], position[Y_AXIS], position[Z_AXIS], position[B_AXIS], position[E_AXIS]);
+    stepper.set_position(position[X_AXIS], position[Y_AXIS], position[Z_AXIS], position[B_AXIS], position[J_AXIS], position[E_AXIS]);
 }
 
-void Planner::set_position_mm(const float &rx, const float &ry, const float &rz, const float &rb, const float &e) {
-  float raw[X_TO_E] = { rx, ry, rz, rb, e };
+void Planner::set_position_mm(const float &rx, const float &ry, const float &rz, const float &rb, const float &j, const float &e) {
+  float raw[X_TO_E] = { rx, ry, rz, rb, j, e };
   #if HAS_POSITION_MODIFIERS
     apply_modifiers(raw
       #if HAS_LEVELING
@@ -2947,12 +2952,13 @@ void Planner::set_position_mm(const float &rx, const float &ry, const float &rz,
     position_cart[X_AXIS] = rx;
     position_cart[Y_AXIS] = ry;
     position_cart[Z_AXIS] = rz;
+    position_cart[J_AXIS] = j;   // A350 + 5-axis
     position_cart[E_AXIS] = e;
 
     inverse_kinematics(raw);
-    set_machine_position_mm(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], raw[E_AXIS]);
+    set_machine_position_mm(delta[A_AXIS], delta[B_AXIS], delta[C_AXIS], raw[B_AXIS], raw[J_AXIS], raw[E_AXIS]);
   #else
-    set_machine_position_mm(raw[X_AXIS], raw[Y_AXIS], raw[Z_AXIS], raw[B_AXIS], raw[E_AXIS]);
+    set_machine_position_mm(raw[X_AXIS], raw[Y_AXIS], raw[Z_AXIS], raw[B_AXIS], raw[J_AXIS], raw[E_AXIS]);
   #endif
 }
 
