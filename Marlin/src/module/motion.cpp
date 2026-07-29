@@ -317,7 +317,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
  * (or from wherever it has been told it is located).
  */
 void line_to_current_position(const float &fr_mm_s/*=feedrate_mm_s*/) {
-  planner.buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[B_AXIS], current_position[E_AXIS], fr_mm_s, active_extruder);
+  planner.buffer_line(current_position, fr_mm_s, active_extruder);
 }
 
 /**
@@ -325,7 +325,7 @@ void line_to_current_position(const float &fr_mm_s/*=feedrate_mm_s*/) {
  * used by G0/G1/G2/G3/G5 and many other functions to set a destination.
  */
 void buffer_line_to_destination(const float fr_mm_s) {
-  planner.buffer_line(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS], destination[B_AXIS], destination[E_AXIS], fr_mm_s, active_extruder);
+  planner.buffer_line(destination, fr_mm_s, active_extruder);
 }
 
 #if IS_KINEMATIC
