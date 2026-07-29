@@ -54,8 +54,9 @@ enum {
   }
 
 //                             X            Y            Z            B            J               E
-#define DEFAULT_AXIS_TO_PORT {PORT_8PIN_3, PORT_8PIN_4, PORT_8PIN_5, PORT_8PIN_6, PORT_8PIN_2, PORT_8PIN_1}
+#define DEFAULT_AXIS_TO_PORT {PORT_8PIN_3, PORT_8PIN_4, PORT_8PIN_5, PORT_8PIN_2, PORT_8PIN_6, PORT_8PIN_1}
 //                                                                                          ^ A-axis via J (5-axis upgrade)
+//                                                                                          SWAPPED for AB swap test: B on P2, A on P6
 
 //
 // Limit Switches
