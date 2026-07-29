@@ -423,6 +423,9 @@ void Stepper::set_directions() {
   #if HAS_B_DIR
     SET_STEP_DIR(B); // B
   #endif
+  #if HAS_J_DIR   // A350 + 5-axis
+    SET_STEP_DIR(J); // J
+  #endif
 
   #if DISABLED(LIN_ADVANCE)
     #if ENABLED(MIXING_EXTRUDER)
@@ -1583,6 +1586,9 @@ void Stepper::stepper_pulse_phase_isr() {
     #if HAS_B_STEP
       PULSE_START(B);
     #endif
+    #if HAS_J_STEP   // A350 + 5-axis
+      PULSE_START(J);
+    #endif
 
     // Pulse Extruders
     // Tick the E axis, correct error term and update position
@@ -1631,6 +1637,9 @@ void Stepper::stepper_pulse_phase_isr() {
     #endif
     #if HAS_B_STEP
       PULSE_STOP(B);
+    #endif
+    #if HAS_J_STEP   // A350 + 5-axis
+      PULSE_STOP(J);
     #endif
 
     #if DISABLED(LIN_ADVANCE)
@@ -1965,13 +1974,14 @@ uint32_t Stepper::stepper_block_phase_isr() {
       step_event_count = current_block->step_event_count << oversampling;
 
       // Initialize Bresenham delta errors to 1/2
-      delta_error[X_AXIS] = delta_error[Y_AXIS] = delta_error[Z_AXIS] = delta_error[B_AXIS] = delta_error[E_AXIS] = -int32_t(step_event_count);
+      delta_error[X_AXIS] = delta_error[Y_AXIS] = delta_error[Z_AXIS] = delta_error[B_AXIS] = delta_error[J_AXIS] = delta_error[E_AXIS] = -int32_t(step_event_count);   // A350 + 5-axis: add J_AXIS
 
       // Calculate Bresenham dividends
       advance_dividend[X_AXIS] = current_block->steps[X_AXIS] << 1;
       advance_dividend[Y_AXIS] = current_block->steps[Y_AXIS] << 1;
       advance_dividend[Z_AXIS] = current_block->steps[Z_AXIS] << 1;
       advance_dividend[B_AXIS] = current_block->steps[B_AXIS] << 1;
+      advance_dividend[J_AXIS] = current_block->steps[J_AXIS] << 1;   // A350 + 5-axis
       advance_dividend[E_AXIS] = current_block->steps[E_AXIS] << 1;
 
       // Calculate Bresenham divisor
@@ -2312,6 +2322,9 @@ void Stepper::init() {
   #if HAS_B_DIR
     B_DIR_INIT;
   #endif
+  #if HAS_J_DIR   // A350 + 5-axis
+    J_DIR_INIT;
+  #endif
 
   // Init Enable Pins - steppers default to disabled.
   #if HAS_X_ENABLE
@@ -2344,6 +2357,9 @@ void Stepper::init() {
   #endif
   #if HAS_B_ENABLE
     B_ENABLE_INIT;
+  #endif
+  #if HAS_J_ENABLE   // A350 + 5-axis
+    J_ENABLE_INIT;
   #endif
 
 
@@ -2389,6 +2405,9 @@ void Stepper::init() {
 
    #if HAS_B_STEP
     AXIS_INIT(B, B);
+  #endif
+   #if HAS_J_STEP   // A350 + 5-axis
+    AXIS_INIT(J, J);
   #endif
 
   #if DISABLED(I2S_STEPPER_STREAM)
@@ -2545,7 +2564,8 @@ void Stepper::report_positions() {
   const int32_t xpos = count_position[X_AXIS],
                 ypos = count_position[Y_AXIS],
                 zpos = count_position[Z_AXIS],
-                bpos = count_position[B_AXIS];
+                bpos = count_position[B_AXIS],
+                jpos = count_position[J_AXIS];   // A350 + 5-axis
 
   if (was_enabled) ENABLE_STEPPER_DRIVER_INTERRUPT();
 
@@ -2572,6 +2592,10 @@ void Stepper::report_positions() {
 
   SERIAL_ECHOPGM(" B:");
   SERIAL_ECHO(bpos);
+
+  // A350 + 5-axis: also report J axis (A-axis)
+  SERIAL_ECHOPGM(" J:");
+  SERIAL_ECHO(jpos);
 
   SERIAL_EOL();
 }

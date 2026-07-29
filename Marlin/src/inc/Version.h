@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V5"   // A350 + 5-axis: V5 includes planner J fix + populate_block fix + AB swap test
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V6"   // A350 + 5-axis: V6 adds stepper ISR J-axis + M114 A-axis reporting
 
   /**
    * Verbose version identifier which should contain a reference to the location

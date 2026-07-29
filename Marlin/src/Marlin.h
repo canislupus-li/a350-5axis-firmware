@@ -161,6 +161,18 @@ void manage_inactivity(const bool ignore_stepper_queue=false);
 #define  enable_B() do{ B_enable; }while(0)
 #define disable_B() do{ B_disable; CBI(axis_known_position, B_AXIS); }while(0)
 
+// A350 + 5-axis: J axis enable/disable
+#if HAS_J_ENABLE
+  #define J_enable  J_ENABLE_WRITE( J_ENABLE_ON)
+  #define J_disable J_ENABLE_WRITE(!J_ENABLE_ON)
+#else
+  #define J_enable  NOOP
+  #define J_disable NOOP
+#endif
+
+#define  enable_J() do{ J_enable; }while(0)
+#define disable_J() do{ J_disable; CBI(axis_known_position, J_AXIS); }while(0)
+
 //
 // Extruder Stepper enable / disable
 //

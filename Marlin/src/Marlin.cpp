@@ -432,6 +432,7 @@ void enable_all_steppers() {
   enable_Y();
   enable_Z();
   enable_B();
+  enable_J();   // A350 + 5-axis
   enable_E0();
   enable_E1();
   enable_E2();
@@ -465,6 +466,7 @@ void disable_all_steppers() {
   disable_Y();
   disable_Z();
   disable_B();
+  disable_J();   // A350 + 5-axis
   disable_e_steppers();
 }
 

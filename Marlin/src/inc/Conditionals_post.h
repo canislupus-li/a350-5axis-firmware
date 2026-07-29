@@ -844,6 +844,11 @@
 #define HAS_B_STEP        (PIN_EXISTS(B_STEP))
 #define HAS_B_MICROSTEPS  (PIN_EXISTS(B_MS1))
 
+// A350 + 5-axis: J axis (rotary module A, mapped to 'A' G-code char)
+#define HAS_J_ENABLE      (PIN_EXISTS(J_ENABLE))
+#define HAS_J_DIR         (PIN_EXISTS(J_DIR))
+#define HAS_J_STEP        (PIN_EXISTS(J_STEP))
+
 // Extruder steppers and solenoids
 #define HAS_E0_ENABLE     (PIN_EXISTS(E0_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E0)))
 #define HAS_E0_DIR        (PIN_EXISTS(E0_DIR))

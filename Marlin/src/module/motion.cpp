@@ -222,6 +222,20 @@ void report_current_position() {
   SERIAL_ECHOPAIR(" Z:", LOGICAL_Z_POSITION(current_position[Z_AXIS]));
   SERIAL_ECHOPAIR(" E:", current_position[E_AXIS]);
 
+  // A350 + 5-axis: print A axis (J_AXIS) when rotary module A is online
+  switch (rotaryModuleA.status()) {
+    case ROTATE_ONLINE:
+      SERIAL_ECHOPAIR(" A:", LOGICAL_J_POSITION(current_position[J_AXIS]));
+      break;
+    case ROTATE_UNUSABLE:
+      SERIAL_ECHOPAIR(" A:", LOGICAL_J_POSITION(current_position[J_AXIS]));
+      SERIAL_ECHOLN("A unusable");
+      break;
+    case ROTATE_OFFLINE:
+      break;
+  }
+
+  // B axis (existing rotary)
   switch (rotaryModule.status()) {
     case ROTATE_ONLINE:
       SERIAL_ECHOPAIR(" B:", LOGICAL_B_POSITION(current_position[B_AXIS]));
