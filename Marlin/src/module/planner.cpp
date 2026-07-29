@@ -1853,6 +1853,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
     if (dy < 0) SBI(dm, Y_AXIS);
     if (dz < 0) SBI(dm, Z_AXIS);
     if (db < 0) SBI(dm, B_AXIS);
+    if (dj < 0) SBI(dm, J_AXIS);   // A350 + 5-axis
   #endif
   if (de < 0) SBI(dm, E_AXIS);
 
@@ -1893,6 +1894,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
     block->steps[Y_AXIS] = ABS(dy);
     block->steps[Z_AXIS] = ABS(dz);
     block->steps[B_AXIS] = ABS(db);
+    block->steps[J_AXIS] = ABS(dj);   // A350 + 5-axis
   #endif
 
   /**
@@ -1935,7 +1937,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   delta_mm[E_AXIS] = esteps_float * steps_to_mm[E_AXIS_N(extruder)];
 
   if (block->steps[X_AXIS] < MIN_STEPS_PER_SEGMENT && block->steps[Y_AXIS] < MIN_STEPS_PER_SEGMENT && block->steps[Z_AXIS] < MIN_STEPS_PER_SEGMENT
-    && block->steps[B_AXIS] < MIN_STEPS_PER_SEGMENT) {
+    && block->steps[B_AXIS] < MIN_STEPS_PER_SEGMENT && block->steps[J_AXIS] < MIN_STEPS_PER_SEGMENT) {   // A350 + 5-axis: also require J < threshold
     block->millimeters = ABS(delta_mm[E_AXIS]);
   }
   else {
@@ -1950,7 +1952,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
         #elif CORE_IS_YZ
           sq(delta_mm[X_AXIS]) + sq(delta_mm[Y_HEAD]) + sq(delta_mm[Z_HEAD])
         #else
-          sq(delta_mm[X_AXIS]) + sq(delta_mm[Y_AXIS]) + sq(delta_mm[Z_AXIS]) + sq(delta_mm[B_AXIS])
+          sq(delta_mm[X_AXIS]) + sq(delta_mm[Y_AXIS]) + sq(delta_mm[Z_AXIS]) + sq(delta_mm[B_AXIS]) + sq(delta_mm[J_AXIS])   // A350 + 5-axis
         #endif
       );
 
@@ -1969,7 +1971,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   }
 
   block->steps[E_AXIS] = esteps;
-  block->step_event_count = MAX(block->steps[X_AXIS], block->steps[Y_AXIS], block->steps[Z_AXIS], block->steps[B_AXIS], esteps);
+  block->step_event_count = MAX(block->steps[X_AXIS], block->steps[Y_AXIS], block->steps[Z_AXIS], block->steps[B_AXIS], block->steps[J_AXIS], esteps);   // A350 + 5-axis: include J
 
   // Bail if this is a zero-length block
   if (block->step_event_count < MIN_STEPS_PER_SEGMENT) return false;
