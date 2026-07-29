@@ -226,6 +226,7 @@ millis_t max_inactive_time, // = 0
   bool Y_DIR = false;
   bool Z_DIR = false;
   bool B_DIR = true;
+  bool J_DIR = true;   // A350 + 5-axis: A axis default direction (LOW or HIGH based on J driver)
   bool E_DIR = false;
   signed char X_HOME_DIR = 1;
   signed char Y_HOME_DIR = 1;

@@ -1060,6 +1060,7 @@ extern uint8_t E_ENABLE_ON;
   extern bool Y_DIR;
   extern bool Z_DIR;
   extern bool B_DIR;
+  extern bool J_DIR;   // A350 + 5-axis: A axis direction state (for SW_MACHINE_SIZE SET_STEP_DIR macro)
   extern bool E_DIR;
   extern signed char X_HOME_DIR;
   extern signed char Y_HOME_DIR;
