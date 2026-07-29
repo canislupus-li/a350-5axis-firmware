@@ -538,6 +538,9 @@
 #ifndef INVERT_B_DIR
   #define INVERT_B_DIR false
 #endif
+#ifndef INVERT_J_DIR   // A350 + 5-axis
+  #define INVERT_J_DIR false
+#endif
 #ifndef INVERT_E_DIR
   #define INVERT_E_DIR false
 #endif
