@@ -38,14 +38,14 @@ jobs:
 
       - name: Stage raw firmware files for pack.py
         run: |
-          mkdir -p release
-          cp .pioenvs/GD32F105/firmware.bin release/firmware.bin
-          cp .pioenvs/GD32F105/firmware.elf release/firmware.elf
+          mkdir -p stage
+          cp .pioenvs/GD32F105/firmware.bin stage/firmware.bin
+          cp .pioenvs/GD32F105/firmware.elf stage/firmware.elf
 
       - name: Pack firmware (Snapmaker format, 2048-byte header)
         run: |
           VC=$(grep -oP 'SM2-\K[0-9.]+' Marlin/src/inc/Version.h | head -1)
-          python snapmaker/scripts/pack.py -c release/firmware.bin -d . -vc "V${VC}-5AXIS"
+          python snapmaker/scripts/pack.py -c stage/firmware.bin -d . -vc "V${VC}-5AXIS"
 
       - name: Upload firmware binary (raw)
         uses: actions/upload-artifact@v4
