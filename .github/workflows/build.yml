@@ -1,10 +1,10 @@
-name: Build A350 Firmware (5-axis upgrade)
+﻿name: Build A350 Firmware (5-axis upgrade)
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, 'baseline-v5.2.1' ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, 'baseline-v5.2.1' ]
   workflow_dispatch:  # Manual trigger
 
 jobs:
