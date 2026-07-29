@@ -114,12 +114,13 @@ template <class L, class R> struct IF<true, L, R> { typedef L type; };
 /**
  * Number of Linear Axes (e.g., XYZIJKUVW)
  * All the logical axes except for the tool (E) axis
+ * A350 + 5-axis: X Y Z I J (= 5 linear axes, +1 E = 6 logical)
  */
 #ifdef NUM_AXES
   #undef NUM_AXES
   #define NUM_AXES_WARNING 1
 #endif
-#define NUM_AXES 4
+#define NUM_AXES 5
 
 #if NUM_AXES >= 1
   #define HAS_X_AXIS 1

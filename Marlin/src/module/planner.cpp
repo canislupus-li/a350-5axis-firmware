@@ -2480,6 +2480,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
         delta_mm[Y_AXIS] * inverse_millimeters,
         delta_mm[Z_AXIS] * inverse_millimeters,
         delta_mm[B_AXIS] * inverse_millimeters,
+        delta_mm[J_AXIS] * inverse_millimeters,  // A350 + 5-axis
         delta_mm[E_AXIS] * inverse_millimeters
       };
     #endif
@@ -2501,6 +2502,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
                                  -previous_unit_vec[Y_AXIS] * unit_vec[Y_AXIS]
                                  -previous_unit_vec[Z_AXIS] * unit_vec[Z_AXIS]
                                  -previous_unit_vec[B_AXIS] * unit_vec[B_AXIS]
+                                 -previous_unit_vec[J_AXIS] * unit_vec[J_AXIS]  // A350 + 5-axis
                                  -previous_unit_vec[E_AXIS] * unit_vec[E_AXIS]
                                 ;
 
@@ -2518,6 +2520,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
           unit_vec[Y_AXIS] - previous_unit_vec[Y_AXIS],
           unit_vec[Z_AXIS] - previous_unit_vec[Z_AXIS],
           unit_vec[B_AXIS] - previous_unit_vec[B_AXIS],
+          unit_vec[J_AXIS] - previous_unit_vec[J_AXIS],  // A350 + 5-axis
           unit_vec[E_AXIS] - previous_unit_vec[E_AXIS]
         };
         normalize_junction_vector(junction_unit_vec);
