@@ -36,7 +36,18 @@ jobs:
       - name: Build GD32F105 firmware
         run: pio run -e GD32F105
 
-      - name: Upload firmware binary
+      - name: Stage raw firmware files for pack.py
+        run: |
+          mkdir -p release
+          cp .pioenvs/GD32F105/firmware.bin release/firmware.bin
+          cp .pioenvs/GD32F105/firmware.elf release/firmware.elf
+
+      - name: Pack firmware (Snapmaker format, 2048-byte header)
+        run: |
+          VC=$(grep -oP 'SM2-\K[0-9.]+' Marlin/src/inc/Version.h | head -1)
+          python snapmaker/scripts/pack.py -c release/firmware.bin -vc "V${VC}-5AXIS"
+
+      - name: Upload firmware binary (raw)
         uses: actions/upload-artifact@v4
         with:
           name: firmware-GD32F105
@@ -49,3 +60,10 @@ jobs:
           name: firmware-GD32F105-elf
           path: .pioenvs/GD32F105/firmware.elf
           if-no-files-found: ignore
+
+      - name: Upload packed firmware (Snapmaker Luban format)
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-SM2-MC-APP-GD32F105
+          path: release/SM2_MC_APP_*.bin
+          if-no-files-found: error
