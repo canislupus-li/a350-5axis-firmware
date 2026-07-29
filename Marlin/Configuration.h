@@ -972,6 +972,7 @@
 #define Y_ENABLE_ON 0
 #define Z_ENABLE_ON 0
 #define B_ENABLE_ON 0
+#define J_ENABLE_ON 0   // A350 + 5-axis: A axis (J) enable polarity (LOW = enabled)
 #if (MOTHERBOARD == BOARD_SNAPMAKER_2_0)
 // #define E_ENABLE_ON 0 // For all extruders
 extern uint8_t E_ENABLE_ON;
