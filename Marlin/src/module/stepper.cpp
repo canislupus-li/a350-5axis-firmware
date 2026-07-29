@@ -354,6 +354,10 @@ Stepper::stepper_laser_t Stepper::laser_trap = {
 #define B_APPLY_DIR(v,Q) B_DIR_WRITE(v)
 #define B_APPLY_STEP(v,Q) B_STEP_WRITE(v)
 
+// A350 + 5-axis: J axis (rotary module A) - direct drive on PE13/PC10/PC11
+#define J_APPLY_DIR(v,Q) J_DIR_WRITE(v)
+#define J_APPLY_STEP(v,Q) J_STEP_WRITE(v)
+
 #define I_APPLY_DIR B_APPLY_DIR
 #define I_APPLY_STEP B_APPLY_STEP
 
