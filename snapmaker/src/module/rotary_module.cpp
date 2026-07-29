@@ -31,7 +31,7 @@ ErrCode RotaryModule::Init(MAC_t &mac, uint8_t mac_index) {
   } else {
     // A axis (5-axis upgrade) - use absolute pin numbers
     OUT_WRITE(E1_DIR_PIN, LOW);
-    pinMode(PE13, OUTPUT); digitalWriteFast(PE13, HIGH);
+    pinMode(PE13, OUTPUT); digitalWrite(PE13, HIGH);
   }
   vTaskDelay(pdMS_TO_TICKS(10));
 
@@ -58,7 +58,7 @@ ErrCode RotaryModule::Init(MAC_t &mac, uint8_t mac_index) {
   if (axis_ == B_AXIS) {
     WRITE(B_DIR_PIN, LOW);
   } else {
-    digitalWriteFast(PE13, LOW);
+    digitalWrite(PE13, LOW);
   }
   return E_SUCCESS;
 }
