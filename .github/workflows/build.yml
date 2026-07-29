@@ -1,0 +1,51 @@
+name: Build A350 Firmware (5-axis upgrade)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.platformio
+            .pioenvs
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini', '**/*.h', '**/*.cpp') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      - name: Build GD32F105 firmware
+        run: pio run -e GD32F105
+
+      - name: Upload firmware binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-GD32F105
+          path: .pioenvs/GD32F105/firmware.bin
+          if-no-files-found: error
+
+      - name: Upload firmware ELF
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-GD32F105-elf
+          path: .pioenvs/GD32F105/firmware.elf
+          if-no-files-found: ignore
