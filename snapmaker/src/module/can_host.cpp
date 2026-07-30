@@ -20,6 +20,7 @@
  */
 #include "can_host.h"
 #include "linear.h"
+#include "rotary_module.h"   // A350 + 5-axis: V8 - need RotaryModule for status() cast in InitModules
 #include "../common/debug.h"
 #include "../snapmaker.h"
 
@@ -606,6 +607,31 @@ ErrCode CanHost::InitModules(MAC_t &mac) {
   }
 
   // check if it is static modules then init it
+  // A350 + 5-axis: for rotary module (device_id 6 / 21), try ALL matching instances.
+  // Each instance probes a different physical port (B probes P6 via B_DIR_PIN,
+  // A probes P2 via J_DIR_PIN). The module only responds if it is actually
+  // plugged into the probed port, so this naturally routes A/B by physical port,
+  // not by CAN scan order.
+  if (device_id == MODULE_DEVICE_ID_ROTARY || device_id == MODULE_DEVICE_ID_ROTARY_2023) {
+    bool any_online = false;
+    for (i = 0; static_modules[i] != NULL; i++) {
+      if (static_modules[i]->device_id() == device_id) {
+        mac.bits.type = MODULE_TYPE_STATIC;
+
+        ret = static_modules[i]->Init(mac, mac_index);
+        if (ret == E_SUCCESS) {
+          // Init returns E_SUCCESS even if the module is not found, but
+          // the instance's status_ is set based on whether a response came back.
+          if (((RotaryModule*)static_modules[i])->status() == ROTATE_ONLINE)
+            any_online = true;
+        }
+      }
+    }
+    if (any_online)
+      mac.bits.configured = 1;
+    goto out;
+  }
+
   for (i = 0; static_modules[i] != NULL; i++) {
     if (static_modules[i]->device_id() == device_id) {
       mac.bits.type = MODULE_TYPE_STATIC;

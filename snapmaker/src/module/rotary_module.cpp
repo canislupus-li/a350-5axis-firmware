@@ -27,11 +27,13 @@ ErrCode RotaryModule::Init(MAC_t &mac, uint8_t mac_index) {
   // Internally A-axis uses J_AXIS=4 enum value (to avoid conflict with B's rotary module handshake).
   if (axis_ == B_AXIS) {
     OUT_WRITE(E1_DIR_PIN, LOW);
-    WRITE(B_DIR_PIN, HIGH);
+    WRITE(B_DIR_PIN, HIGH);  // B module probed via B_DIR_PIN (PC12) on P6
   } else {
-    // A axis (5-axis upgrade) - use absolute pin numbers
+    // A axis (5-axis upgrade) - probe via J_DIR_PIN (PC10) on P2
+    // V8 fix: was previously using PE13 (J_STEP_PIN) which the rotary module does not monitor.
+    // The module only checks its DIR pin, so we must use J_DIR_PIN for handshake.
     OUT_WRITE(E1_DIR_PIN, LOW);
-    pinMode(PE13, OUTPUT); digitalWrite(PE13, HIGH);
+    WRITE(J_DIR_PIN, HIGH);
   }
   vTaskDelay(pdMS_TO_TICKS(10));
 
@@ -58,7 +60,7 @@ ErrCode RotaryModule::Init(MAC_t &mac, uint8_t mac_index) {
   if (axis_ == B_AXIS) {
     WRITE(B_DIR_PIN, LOW);
   } else {
-    digitalWrite(PE13, LOW);
+    WRITE(J_DIR_PIN, LOW);  // V8 fix: was digitalWrite(PE13, LOW) (wrong pin)
   }
   return E_SUCCESS;
 }

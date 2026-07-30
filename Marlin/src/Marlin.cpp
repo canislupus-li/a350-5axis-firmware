@@ -1134,6 +1134,12 @@ void setup() {
 
   stepper.init();           // Init stepper. This enables interrupts!
 
+  // A350 + 5-axis: V8 - enable all steppers (including J) on boot
+  // so that the first G0 A10 does not need an explicit M17 first.
+  // This is especially important for the A module on P2 since user may
+  // not realise they have to send M17 before testing.
+  enable_all_steppers();
+
   ftMotion.init();
 
   #if HAS_SERVOS

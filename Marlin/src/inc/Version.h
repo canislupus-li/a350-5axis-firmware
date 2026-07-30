@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V6"   // A350 + 5-axis: V6 adds stepper ISR J-axis + M114 A-axis reporting
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V8"   // A350 + 5-axis: V8 fixes rotary A-module init (J_DIR_PIN probe), 6/21 dual support, M114 always prints A
 
   /**
    * Verbose version identifier which should contain a reference to the location

@@ -101,6 +101,9 @@ enum ModuleDeviceID {
   MODULE_DEVICE_ID_40W_LASER = 20,   // 20
   MODULE_DEVICE_ID_LASER_RED_2W_2023    = 23,
 
+  // A350 + 5-axis: rotary module 2023 new version (same physical product as old rotary, different firmware)
+  MODULE_DEVICE_ID_ROTARY_2023    = 21,
+
   MODULE_DEVICE_ID_INVALID
 };
 
