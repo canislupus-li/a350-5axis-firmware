@@ -441,17 +441,12 @@ void GcodeSuite::G28(const bool always_home_all) {
     }
 
     // A350 + 5-axis: V9 - same homing pattern for A axis (rotaryModule A, J_AXIS)
-    if (rotaryModuleA.status() == ROTATE_ONLINE) {
-      if (home_all || homeA) {
-        if (!axes_homed(J_AXIS)) {
-          set_axis_is_at_home(J_AXIS);
-          destination[J_AXIS] = current_position[J_AXIS];
-        } else {
-          homeaxis(J_AXIS);
-        }
-      }
-    } else {
+    // A axis (rotary module) has no endstop so we never call homeaxis(J_AXIS)
+    // (that would read home_dir_P[4] and max_length_P[4] out of bounds).
+    // Just mark as homed and sync the destination to the current position.
+    if (home_all || homeA) {
       set_axis_is_at_home(J_AXIS);
+      destination[J_AXIS] = current_position[J_AXIS];
     }
     sync_plan_position();
 
