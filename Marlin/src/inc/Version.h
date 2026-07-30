@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V8"   // A350 + 5-axis: V8 fixes rotary A-module init (J_DIR_PIN probe), 6/21 dual support, M114 always prints A
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V8S"  // A350 + 5-axis: V8S = V8 with A/B port bindings swapped (A=P6, B=P2). Use to verify physical ports independently.
 
   /**
    * Verbose version identifier which should contain a reference to the location
