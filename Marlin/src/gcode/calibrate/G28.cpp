@@ -286,14 +286,16 @@ void GcodeSuite::G28(const bool always_home_all) {
       const bool homeX = always_home_all || parser.seen('X'),
                  homeY = always_home_all || parser.seen('Y'),
                  homeZ = always_home_all || parser.seen('Z'),
-                 homeB = always_home_all || parser.seen('B');
-      bool home_all = (!homeX && !homeY && !homeZ && !homeB) || (homeX && homeY && homeZ&& homeB);
+                 homeB = always_home_all || parser.seen('B'),
+                 homeA = always_home_all || parser.seen('A');   // A350 + 5-axis: V9 - recognise G28 A
+      bool home_all = (!homeX && !homeY && !homeZ && !homeB && !homeA) || (homeX && homeY && homeZ&& homeB && homeA);
     #else
       const bool homeX = always_home_all || parser.seen('X'),
                  homeY = always_home_all || parser.seen('Y'),
                  homeZ = always_home_all || parser.seen('Z'),
                  homeB = always_home_all || parser.seen('B'),
-                 home_all = (!homeX && !homeY && !homeZ && !homeB) || (homeX && homeY && homeZ&& homeB);
+                 homeA = always_home_all || parser.seen('A'),   // A350 + 5-axis: V9 - recognise G28 A
+                 home_all = (!homeX && !homeY && !homeZ && !homeB && !homeA) || (homeX && homeY && homeZ&& homeB && homeA);
     #endif
 
     set_destination_from_current();
@@ -436,6 +438,20 @@ void GcodeSuite::G28(const bool always_home_all) {
       }
     } else {
       set_axis_is_at_home(B_AXIS);
+    }
+
+    // A350 + 5-axis: V9 - same homing pattern for A axis (rotaryModule A, J_AXIS)
+    if (rotaryModuleA.status() == ROTATE_ONLINE) {
+      if (home_all || homeA) {
+        if (!axes_homed(J_AXIS)) {
+          set_axis_is_at_home(J_AXIS);
+          destination[J_AXIS] = current_position[J_AXIS];
+        } else {
+          homeaxis(J_AXIS);
+        }
+      }
+    } else {
+      set_axis_is_at_home(J_AXIS);
     }
     sync_plan_position();
 
