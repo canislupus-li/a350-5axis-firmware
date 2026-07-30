@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V9"  // A350 + 5-axis: V9 = V8 + (a) M17/M18/M84 use axis_codes for J axis char 'A' instead of hard-coded 'J'; (b) G28 A is recognised. A=normal binding (P2).
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V9S"  // A350 + 5-axis: V9S = V9 (gcode fix + G28 simplification) + A/B port bindings swapped (A=P6, B=P2). Use to verify physical ports independently.
 
   /**
    * Verbose version identifier which should contain a reference to the location
