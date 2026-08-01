@@ -178,3 +178,4 @@ Edit/
 .cache
 .vscode
 *.log
+stage/

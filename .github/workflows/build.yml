@@ -66,5 +66,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: firmware-SM2-MC-APP-GD32F105
-          path: release/SM2_MC_APP_*.bin
+          path: release/SM2_*.bin
           if-no-files-found: error

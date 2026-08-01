@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V9S"  // A350 + 5-axis: V9S = V9 (gcode fix + G28 simplification) + A/B port bindings swapped (A=P6, B=P2). Use to verify physical ports independently.
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V10"  // A350 + 5-axis: V10 = V9S port fix. DEFAULT_AXIS_TO_PORT restored to A=P2, B=P6 (matches physical hardware and original design).
 
   /**
    * Verbose version identifier which should contain a reference to the location

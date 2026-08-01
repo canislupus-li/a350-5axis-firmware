@@ -107,7 +107,7 @@ def pack_major_image(controller=None, module=None, screen=None, version=None):
         if version == None:
             version = re.search(version_pattern, screen.name)[0]
 
-    full_version = "Snapmaker_{}_{}".format(version, date)
+    full_version = "SM2_{}_{}".format(version, date)
 
     major_image = cur_dir.joinpath(full_version + '.bin')
     if major_image.exists():

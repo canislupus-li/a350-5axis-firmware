@@ -25,11 +25,13 @@ ErrCode RotaryModule::Init(MAC_t &mac, uint8_t mac_index) {
   // Drive DIR pin HIGH for the axis this module owns
   // Note: A350 + 5-axis uses 'A' as the A-axis G-code character (compatible with A400).
   // Internally A-axis uses J_AXIS=4 enum value (to avoid conflict with B's rotary module handshake).
+  // V10: B_DIR_PIN/J_DIR_PIN are kernel-set variables — actual port mapping comes from
+  // DEFAULT_AXIS_TO_PORT in pins_GD32F1.h (B=P6, J=P2 per original design).
   if (axis_ == B_AXIS) {
     OUT_WRITE(E1_DIR_PIN, LOW);
-    WRITE(B_DIR_PIN, HIGH);  // B module probed via B_DIR_PIN (PC12) on P6
+    WRITE(B_DIR_PIN, HIGH);  // B module — kernel routes B to P6, B_DIR_PIN is PC12
   } else {
-    // A axis (5-axis upgrade) - probe via J_DIR_PIN (PC10) on P2
+    // A axis (5-axis upgrade) — kernel routes J to P2, J_DIR_PIN is PC10
     // V8 fix: was previously using PE13 (J_STEP_PIN) which the rotary module does not monitor.
     // The module only checks its DIR pin, so we must use J_DIR_PIN for handshake.
     OUT_WRITE(E1_DIR_PIN, LOW);
