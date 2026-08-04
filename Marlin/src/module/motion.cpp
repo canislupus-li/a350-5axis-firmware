@@ -162,7 +162,8 @@ const float homing_feedrate_mm_s[XN] PROGMEM = {
     MMM_TO_MMS(HOMING_FEEDRATE_XY), MMM_TO_MMS(HOMING_FEEDRATE_XY),
   #endif
   MMM_TO_MMS(HOMING_FEEDRATE_Z),
-  MMM_TO_MMS(HOMING_FEEDRATE_B)
+  MMM_TO_MMS(HOMING_FEEDRATE_B),
+  MMM_TO_MMS(HOMING_FEEDRATE_J)   // A350 + 5-axis: J (A) axis
 };
 
 // Cartesian conversion result goes here:
@@ -300,6 +301,7 @@ void get_cartesian_from_steppers() {
     #endif
     cartes[Z_AXIS] = planner.get_axis_position_mm(Z_AXIS);
     cartes[B_AXIS] = planner.get_axis_position_mm(B_AXIS);
+    cartes[J_AXIS] = planner.get_axis_position_mm(J_AXIS);   // A350 + 5-axis: include J (A) axis
   #endif
 }
 
@@ -318,7 +320,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
   get_cartesian_from_steppers();
 
   #if HAS_POSITION_MODIFIERS
-    float pos[X_TO_E] = { cartes[X_AXIS], cartes[Y_AXIS], cartes[Z_AXIS], cartes[B_AXIS], current_position[E_AXIS] };
+    float pos[X_TO_E] = { cartes[X_AXIS], cartes[Y_AXIS], cartes[Z_AXIS], cartes[B_AXIS], cartes[J_AXIS], current_position[E_AXIS] };  // A350 + 5-axis: include J
     planner.unapply_modifiers(pos
       #if HAS_LEVELING
         , true
@@ -1289,6 +1291,7 @@ void do_homing_move(const AxisEnum axis, const float distance, const float fr_mm
       planner.get_axis_position_mm(Y_AXIS),
       planner.get_axis_position_mm(Z_AXIS),
       planner.get_axis_position_mm(B_AXIS),
+      planner.get_axis_position_mm(J_AXIS),   // A350 + 5-axis: include J axis
       planner.get_axis_position_mm(E_AXIS)
     };
     target[axis] = 0;
@@ -1372,7 +1375,9 @@ void set_axis_is_at_home(const AxisEnum axis) {
     #endif
     : base_home_pos(axis));
   #else
-    current_position[axis] = base_home_pos(axis);
+    // A350 + 5-axis V11: J axis home position is hardcoded 0 (rotary module)
+    // because [XN]/[XYZ] arrays don't include J=4
+    current_position[axis] = (axis == J_AXIS) ? 0 : base_home_pos(axis);
   #endif
 
   /**
@@ -1489,8 +1494,8 @@ void homeaxis(const AxisEnum axis) {
   #endif
 
   float maxlen;
-  if (axis == B_AXIS) {
-    maxlen = planner.get_axis_position_mm(B_AXIS);
+  if (axis == B_AXIS || axis == J_AXIS) {   // A350 + 5-axis V11: J axis uses same fmod 360° logic as B
+    maxlen = planner.get_axis_position_mm(axis);
     maxlen = fmod(maxlen, 360) * axis_home_dir;
     if (maxlen > 180) {
       maxlen -= 360;
@@ -1545,7 +1550,7 @@ void homeaxis(const AxisEnum axis) {
     #endif
   }
 
-  if (axis != B_AXIS)
+  if (axis != B_AXIS && axis != J_AXIS)   // A350 + 5-axis: J axis also skips retraction (rotary)
     do_homing_move(axis, axis_home_dir * -3, homing_feedrate(axis));
 
   #if HAS_EXTRA_ENDSTOPS
@@ -1725,14 +1730,17 @@ void homeaxis(const AxisEnum axis) {
     home_dir_P[Y_AXIS] = Y_HOME_DIR;
     home_dir_P[Z_AXIS] = Z_HOME_DIR;
     home_dir_P[B_AXIS] = B_HOME_DIR;
+    home_dir_P[J_AXIS] = J_HOME_DIR;   // A350 + 5-axis: A axis home direction
     home_bump_mm_P[X_AXIS] = X_HOME_BUMP_MM;
     home_bump_mm_P[Y_AXIS] = Y_HOME_BUMP_MM;
     home_bump_mm_P[Z_AXIS] = Z_HOME_BUMP_MM;
     home_bump_mm_P[B_AXIS] = B_HOME_BUMP_MM;
+    home_bump_mm_P[J_AXIS] = J_HOME_BUMP_MM;   // A350 + 5-axis: A axis bump
     base_home_pos_P[X_AXIS] = (home_dir_P[X_AXIS] < 0)?X_MIN_POS:X_MAX_POS;
     base_home_pos_P[Y_AXIS] = (home_dir_P[Y_AXIS] < 0)?Y_MIN_POS:Y_MAX_POS;
     base_home_pos_P[Z_AXIS] = (home_dir_P[Z_AXIS] < 0)?Z_MIN_POS:Z_MAX_POS;
     base_home_pos_P[B_AXIS] = 0;
+    base_home_pos_P[J_AXIS] = 0;   // A350 + 5-axis: A axis home position = 0 (rotary)
     #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
     soft_endstop[X_AXIS].min = X_MIN_POS;
     soft_endstop[Y_AXIS].min = Y_MIN_POS;

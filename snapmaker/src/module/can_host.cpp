@@ -616,13 +616,19 @@ ErrCode CanHost::InitModules(MAC_t &mac) {
     bool any_online = false;
     for (i = 0; static_modules[i] != NULL; i++) {
       if (static_modules[i]->device_id() == device_id) {
+        RotaryModule *rm = (RotaryModule*)static_modules[i];
+        // A350 + 5-axis V12 fix: if this instance is already ONLINE from a
+        // previous MAC, skip re-init to prevent a later MAC (which probes
+        // the wrong DIR pin) from overwriting the correct status.
+        if (rm->status() == ROTATE_ONLINE) {
+          any_online = true;
+          continue;
+        }
         mac.bits.type = MODULE_TYPE_STATIC;
 
-        ret = static_modules[i]->Init(mac, mac_index);
+        ret = rm->Init(mac, mac_index);
         if (ret == E_SUCCESS) {
-          // Init returns E_SUCCESS even if the module is not found, but
-          // the instance's status_ is set based on whether a response came back.
-          if (((RotaryModule*)static_modules[i])->status() == ROTATE_ONLINE)
+          if (rm->status() == ROTATE_ONLINE)
             any_online = true;
         }
       }

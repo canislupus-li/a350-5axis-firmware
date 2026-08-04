@@ -39,7 +39,7 @@ void GcodeSuite::G92() {
       case 1:
         // Zero the G92 values and restore current position
         #if !IS_SCARA
-          LOOP_XN(i) {
+          LOOP_XN(i) {             // A350 + 5-axis V11: LOOP_XN already includes J(A) (XN=5 = XYZBJ)
             const float v = position_shift[i];
             if (v) {
               position_shift[i] = 0;

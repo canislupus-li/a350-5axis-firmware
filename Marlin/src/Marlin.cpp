@@ -232,6 +232,7 @@ millis_t max_inactive_time, // = 0
   signed char Y_HOME_DIR = 1;
   signed char Z_HOME_DIR = 1;
   signed char B_HOME_DIR = -1;
+  signed char J_HOME_DIR = -1;   // A350 + 5-axis V11 (A axis, matches B direction)
   float X_MAX_POS = 150;
   float Y_MAX_POS = 150;
   float Z_MAX_POS = 150;

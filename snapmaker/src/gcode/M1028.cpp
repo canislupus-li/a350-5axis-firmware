@@ -59,7 +59,7 @@ enum SettingOpt : uint8_t {
   OPT_INVALID
 };
 
-float sm_homing_feedrate[XN] = {HOMING_FEEDRATE_XY/60, HOMING_FEEDRATE_XY/60, HOMING_FEEDRATE_Z/60, HOMING_FEEDRATE_B/60};
+float sm_homing_feedrate[XN] = {HOMING_FEEDRATE_XY/60, HOMING_FEEDRATE_XY/60, HOMING_FEEDRATE_Z/60, HOMING_FEEDRATE_B/60, HOMING_FEEDRATE_J/60};  // A350 + 5-axis: J axis
 uint8_t sm_homing_bump_divisor[XN] = HOMING_BUMP_DIVISOR;
 
 // speed in calibration

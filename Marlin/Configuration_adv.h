@@ -477,7 +477,8 @@
 #define Y_HOME_BUMP_MM 1
 #define Z_HOME_BUMP_MM 1
 #define B_HOME_BUMP_MM 0
-#define HOMING_BUMP_DIVISOR { 9, 9, 10, 1}  // Re-Bump Speed Divisor (Divides the Homing Feedrate)
+#define J_HOME_BUMP_MM 0   // A350 + 5-axis: A axis (rotary), same as B
+#define HOMING_BUMP_DIVISOR { 9, 9, 10, 1, 1}  // Re-Bump Speed Divisor (Divides the Homing Feedrate) — 5th value = J axis
 #define QUICK_HOME                     // If homing includes X and Y, do a diagonal move initially
 
 // When G28 is called, this option will make Y home before X

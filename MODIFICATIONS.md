@@ -181,6 +181,55 @@ python snapmaker/scripts/pack.py -c stage/firmware.bin -d . -vc "V$(grep -oP 'SM
 
 ---
 
-## 6. 后续修改 / 新版本
+## 6. V12 修改说明 (2026-08-04)
 
-这个文档是 V10 的修改说明。后续添加功能 / 修改,会作为新版本(V11, V12, ...)记录,各自有独立的修改说明。
+> **V12 = G28 A轴修复 + 旋转模组识别修复 + HMI兼容协议**
+> 基于 V10，修复 A 轴 homing 不响应、双旋转模组状态覆盖、HMI 旋转 UI 无法调出等问题。
+
+### 6.1 G28 A轴不响应修复
+
+**根因**：`home_dir_P[J_AXIS]` 在 `UpdateMachineDefines()` 中未初始化，值为 0，导致 homing 移动距离 = `fmod(pos,360) * 0 = 0`，A 轴完全不动。
+
+| 文件 | 改动 |
+|---|---|
+| `Marlin/src/module/motion.cpp` | `homing_feedrate_mm_s[]` 加 J 值；`do_homing_move()` target 加 J_AXIS；`homeaxis()` 回退跳过 J_AXIS；`UpdateMachineDefines()` 加 `home_dir_P/home_bump_mm_P/base_home_pos_P` J 初始化；`get_cartesian_from_steppers()` 加 J；`set_current_from_steppers_for_axis()` pos 加 J |
+| `Marlin/src/module/motion.h` | `xn_bits` 加 `_BV(J_AXIS)`；4个 `move_to_limited_*` 函数 target 加 J |
+| `snapmaker/src/gcode/M1028.cpp` | `sm_homing_feedrate[]` 加 J 值 |
+| `Marlin/Configuration.h` | 加 `HOMING_FEEDRATE_J (30*60)` |
+| `Marlin/Configuration_adv.h` | 加 `J_HOME_BUMP_MM 0`；`HOMING_BUMP_DIVISOR` 加第 5 值 |
+
+### 6.2 旋转模组状态覆盖修复
+
+**根因**：两个旋转模组共用 `device_id=6`，CAN 扫描每个 MAC 都会调用两个实例的 `Init()`，后处理的 MAC 覆盖先识别的状态（B 被 A 的 MAC 置为 UNUSABLE）。
+
+| 文件 | 改动 |
+|---|---|
+| `snapmaker/src/module/can_host.cpp` | `InitModules()` 中旋转模组实例已 ONLINE 时跳过后续 Init，防止状态覆盖 |
+
+### 6.3 HMI 旋转模组兼容协议
+
+| 文件 | 改动 |
+|---|---|
+| `snapmaker/src/hmi/event_handler.cpp` | `GetRotateStatus()` 返回 3 字节：byte[0]=任一模组在线即0（4轴HMI兼容），byte[1]=A真实状态，byte[2]=B真实状态 |
+
+### 6.4 修复了部分代码对A轴的不响应
+
+涉及文件：motion.cpp/h、M1028.cpp、Configuration.h、Configuration_adv.h（同 6.1 文件列表）
+
+### 6.5 版本号
+
+`SHORT_BUILD_VERSION`: `SM2-5.2.1-5AXIS-V12`
+
+### 6.6 烧录验证
+
+| 测试 | 结果 |
+|---|---|
+| HMI 刷入 V12 | ✓ 启动日志显示 `SM2-5.2.1-5AXIS-V12` |
+| A+B 双模组接入 | ✓ `Rotary module B detected` + `Rotary module A detected`，无状态覆盖 |
+| `SC req rotate sta` | ✓ byte[0]=0（HMI 调出旋转 UI） |
+
+---
+
+## 7. 后续修改 / 新版本
+
+这个文档是 V10 的修改说明。后续添加功能 / 修改，会作为新版本记录，各自有独立的修改说明。

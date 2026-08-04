@@ -33,7 +33,7 @@ def pack_minor_image(image_type, start_id, end_id, version, input, output):
 
     # Construct full version
     if image_type == MINOR_IMAGE_TYPE_CONTROLLER:
-        full_version = 'Snapmaker_{}'.format(version).encode('UTF-8')
+        full_version = 'Snapmaker_{}'.format(version).encode('UTF-8')  # HMI checks MINOR image PACKAGE
     else:
         full_version = 'Snapmaker_{}_{}'.format(version, date).encode('UTF-8')
     if len(full_version) >= 32:
@@ -84,7 +84,7 @@ def append_body(output, filename):
 def pack_major_image(controller=None, module=None, screen=None, version=None):
     count = 0
     date  = datetime.datetime.today().strftime('%Y%m%d')
-    version_pattern = r"V\d+\.\d+\.\d+.+"
+    version_pattern = r"V\d+\.\d+\.\d+[^_]+"  # Stop before _date suffix
 
     if isinstance(module, Path):
         print("module path: {}".format(module.absolute()))
@@ -107,13 +107,16 @@ def pack_major_image(controller=None, module=None, screen=None, version=None):
         if version == None:
             version = re.search(version_pattern, screen.name)[0]
 
-    full_version = "SM2_{}_{}".format(version, date)
-
-    major_image = cur_dir.joinpath(full_version + '.bin')
+    # Filename uses SM2_ prefix (short, for file management)
+    filename_version = "SM2_{}_{}".format(version, date)
+    major_image = cur_dir.joinpath(filename_version + '.bin')
     if major_image.exists():
         if major_image.with_suffix('.bin.old').exists():
             os.remove(major_image.with_suffix('.bin.old'))
         os.rename(major_image, major_image.with_suffix('.bin.old'))
+
+    # PACKAGE field uses SM2_ prefix for major image (HMI checks the minor image inside)
+    full_version = "SM2_{}_{}".format(version, date)
 
     full_version = full_version.encode('ASCII')
 

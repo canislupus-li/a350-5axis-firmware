@@ -1066,6 +1066,7 @@ extern uint8_t E_ENABLE_ON;
   extern signed char Y_HOME_DIR;
   extern signed char Z_HOME_DIR;
   extern signed char B_HOME_DIR;
+  extern signed char J_HOME_DIR;   // A350 + 5-axis V11
   extern float X_MAX_POS;
   extern float Y_MAX_POS;
   extern float Z_MAX_POS;
@@ -1423,6 +1424,7 @@ extern uint8_t E_ENABLE_ON;
 #define HOMING_FEEDRATE_XY (50*60)
 #define HOMING_FEEDRATE_Z  (10*60)
 #define HOMING_FEEDRATE_B  (30*60)
+#define HOMING_FEEDRATE_J  (30*60)   // A350 + 5-axis: A axis same as B
 
 // Validate that endstops are triggered on homing moves
 //#define VALIDATE_HOMING_ENDSTOPS

@@ -419,6 +419,7 @@ void protected_pin_err();
   extern signed char Y_HOME_DIR;
   extern signed char Z_HOME_DIR;
   extern signed char B_HOME_DIR;
+  extern signed char J_HOME_DIR;   // A350 + 5-axis V11
   extern float X_MAX_POS;
   extern float Y_MAX_POS;
   extern float Z_MAX_POS;

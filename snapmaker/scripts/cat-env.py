@@ -54,7 +54,7 @@ def save_env():
     if getsize(f_path) > 500 * 1024:
       move(f_path, join(cwd, "env_old.txt"))
 
-  f = open(f_path, "a+")
+  f = open(f_path, "a+", encoding="utf-8", errors="replace")
 
   # build timestamp
   f.write("==============================\r\n")

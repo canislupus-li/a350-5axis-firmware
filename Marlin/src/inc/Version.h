@@ -38,7 +38,7 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V10"  // A350 + 5-axis: V10 = V9S port fix. DEFAULT_AXIS_TO_PORT restored to A=P2, B=P6 (matches physical hardware and original design).
+  #define SHORT_BUILD_VERSION "SM2-5.2.1-5AXIS-V12"  // A350 + 5-axis V12: G28 A-axis fix (home_dir/feedrate/bump/xn_bits/do_homing_move)
 
   /**
    * Verbose version identifier which should contain a reference to the location

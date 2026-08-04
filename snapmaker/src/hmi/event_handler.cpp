@@ -1161,12 +1161,25 @@ static ErrCode GetAddonStopStatus(SSTP_Event_t &event) {
 }
 
 static ErrCode GetRotateStatus(SSTP_Event_t &event) {
-  uint8_t state = rotaryModule.status();
-  LOG_I("SC req rotate sta:%d\n", state);
-  uint8_t buff[1];
+  // A350 + 5-axis V12: return 3 bytes.
+  //
+  // byte[0] = 0 (ONLINE) if ANY rotary module is online.
+  //          Used by 4-axis HMI (unchanged) to decide whether to show
+  //          the rotary module UI.  When only A is connected, UI shows
+  //          "B" — user accepts this.
+  // byte[1] = A axis actual status  (for 5-axis HMI)
+  // byte[2] = B axis actual status  (for 5-axis HMI)
+  //
+  uint8_t state_b = rotaryModule.status();   // = rotaryModuleB.status() via #define alias
+  uint8_t state_a = rotaryModuleA.status();
+  LOG_I("SC req rotate sta: B=%d A=%d\n", state_b, state_a);
 
-  buff[0] = state;
-  event.length = 1;
+  uint8_t buff[3];
+  buff[0] = (state_b == ROTATE_ONLINE || state_a == ROTATE_ONLINE)
+            ? (uint8_t)ROTATE_ONLINE : state_b;
+  buff[1] = state_a;
+  buff[2] = state_b;
+  event.length = 3;
   event.data = buff;
 
   return hmi.Send(event);

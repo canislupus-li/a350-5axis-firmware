@@ -37,7 +37,7 @@
 // Axis homed and known-position states
 extern uint8_t axis_homed, axis_known_position;
 extern bool axis_is_homing;
-constexpr uint8_t xn_bits = _BV(X_AXIS) | _BV(Y_AXIS) | _BV(Z_AXIS) | _BV(B_AXIS);
+constexpr uint8_t xn_bits = _BV(X_AXIS) | _BV(Y_AXIS) | _BV(Z_AXIS) | _BV(B_AXIS) | _BV(J_AXIS);  // A350 + 5-axis: include J (A) axis
 FORCE_INLINE bool all_axes_homed() { return (axis_homed & xn_bits) == xn_bits; }
 FORCE_INLINE bool all_axes_known() { return (axis_known_position & xn_bits) == xn_bits; }
 FORCE_INLINE void set_all_unhomed() { axis_homed = 0; }
@@ -413,21 +413,21 @@ extern float laser_crosslight_offset[XN];
 void  move_to_limited_position(const float  (&target)[X_TO_E], const float fr_mm_s);
 
 FORCE_INLINE void  move_to_limited_z(const float z, const float fr_mm_s) {
-  float target[X_TO_E] = {current_position[X_AXIS], current_position[Y_AXIS], z, current_position[B_AXIS], current_position[E_AXIS]};
+  float target[X_TO_E] = {current_position[X_AXIS], current_position[Y_AXIS], z, current_position[B_AXIS], current_position[J_AXIS], current_position[E_AXIS]};
   move_to_limited_position(target, fr_mm_s);
 }
 
 FORCE_INLINE void  move_to_limited_ze(const float z, const float e, const float fr_mm_s) {
-  float target[X_TO_E] = {current_position[X_AXIS], current_position[Y_AXIS], z, current_position[B_AXIS], e};
+  float target[X_TO_E] = {current_position[X_AXIS], current_position[Y_AXIS], z, current_position[B_AXIS], current_position[J_AXIS], e};
   move_to_limited_position(target, fr_mm_s);
 }
 
 FORCE_INLINE void  move_to_limited_xy(const float x, const float y, const float fr_mm_s) {
-  float target[X_TO_E] = {x, y, current_position[Z_AXIS], current_position[B_AXIS], current_position[E_AXIS]};
+  float target[X_TO_E] = {x, y, current_position[Z_AXIS], current_position[B_AXIS], current_position[J_AXIS], current_position[E_AXIS]};
   move_to_limited_position(target, fr_mm_s);
 }
 
 FORCE_INLINE void  move_to_limited_x(const float x, const float fr_mm_s) {
-  float target[X_TO_E] = {x, current_position[Y_AXIS], current_position[Z_AXIS], current_position[B_AXIS], current_position[E_AXIS]};
+  float target[X_TO_E] = {x, current_position[Y_AXIS], current_position[Z_AXIS], current_position[B_AXIS], current_position[J_AXIS], current_position[E_AXIS]};
   move_to_limited_position(target, fr_mm_s);
 }
